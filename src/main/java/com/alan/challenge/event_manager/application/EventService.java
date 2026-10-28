@@ -6,9 +6,14 @@ import com.alan.challenge.event_manager.domain.EventAudit;
 import com.alan.challenge.event_manager.domain.EventType;
 import com.alan.challenge.event_manager.persistence.EventAuditRepository;
 import com.alan.challenge.event_manager.persistence.EventRepository;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 import java.time.Instant;
 
+@Service
 public class EventService {
 
     private final EventRepository eventRepository;
@@ -22,7 +27,8 @@ public class EventService {
         this.eventAuditRepository = eventAuditRepository;
     }
 
-    public void register(Event event) {
+    @Transactional
+    public Event register(Event event) {
         if (eventRepository.existsByEventId(event.getEventId())) {
             throw new DuplicateEventException(event.getEventId());
         }
@@ -33,6 +39,12 @@ public class EventService {
             EventAudit audit = new EventAudit(savedEvent, Instant.now());
             eventAuditRepository.save(audit);
         }
+
+        return savedEvent;
+    }
+    @Transactional(readOnly = true)
+    public List<Event> findAll() {
+        return eventRepository.findAll();
     }
 
 }

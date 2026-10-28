@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: event-manager-test
+
+  datasource:
+    url: jdbc:h2:mem:event-manager-test;DB_CLOSE_DELAY=-1
+    username: sa
+    password: ""
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    open-in-view: false
+
+  h2:
+    console:
+      enabled: false
