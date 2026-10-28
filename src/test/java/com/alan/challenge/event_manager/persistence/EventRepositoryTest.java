@@ -6,6 +6,7 @@ import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
+import org.springframework.dao.DataIntegrityViolationException;
 
 import java.time.Instant;
 
@@ -54,6 +55,33 @@ class EventRepositoryTest {
                         "Inicio de la línea de producción",
                         retrievedEvent.getDescription()
                 )
+        );
+    }
+    @Test
+    void shouldRejectEventsWithDuplicateEventId() {
+        // Given: un evento ya guardado
+        Event originalEvent = new Event(
+                "EVT-1001",
+                Instant.parse("2026-10-28T13:00:00Z"),
+                EventType.PRODUCTION,
+                "Inicio de la línea de producción"
+        );
+
+        eventRepository.saveAndFlush(originalEvent);
+        entityManager.clear();
+
+        // Otra instancia con el mismo identificador externo
+        Event duplicateEvent = new Event(
+                "EVT-1001",
+                Instant.parse("2026-10-28T14:00:00Z"),
+                EventType.QUALITY,
+                "Control de calidad aprobado"
+        );
+
+        // When / Then
+        assertThrows(
+                DataIntegrityViolationException.class,
+                () -> eventRepository.saveAndFlush(duplicateEvent)
         );
     }
 }
