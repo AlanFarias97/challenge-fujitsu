@@ -1,0 +1,141 @@
+<a class="skip-link" href="#contenido">Ir al contenido</a>
+<header class="topbar">
+  <a class="brand" href="#contenido" aria-label="Event Manager, inicio"
+    ><span class="brand-symbol" aria-hidden="true"><i></i><i></i><i></i></span
+    ><span
+      >event<span class="brand-light">manager</span><small>PANEL DE OPERACIONES</small></span
+    ></a
+  >
+  <div class="topbar-right">
+    <span class="environment"><span aria-hidden="true"></span>Entorno local</span
+    ><span class="header-divider"></span><span class="workspace-icon" aria-hidden="true">EM</span>
+  </div>
+</header>
+<main id="contenido">
+  <div class="breadcrumb">
+    <span>Operaciones</span><span aria-hidden="true">/</span><strong>Gestión de eventos</strong>
+  </div>
+  <section class="page-heading" aria-labelledby="page-title">
+    <div>
+      <div class="eyebrow">CONECTÁ LO QUE OCURRE</div>
+      <h1 id="page-title">Gestión de eventos<span>.</span></h1>
+      <p>Registrá, consultá y seguí los eventos de tu fábrica.</p>
+    </div>
+    <div class="connection" [class.offline]="loadError()" [class.checking]="loading()">
+      <span class="status-dot" aria-hidden="true"></span>
+      <div>
+        <strong>{{
+          loading()
+            ? 'Consultando servidor'
+            : loadError()
+              ? 'Sin actualización'
+              : 'Servidor disponible'
+        }}</strong
+        ><small>
+          @if (lastUpdated(); as updated) {
+            Última consulta · {{ updated | date: 'HH:mm:ss' }}
+          } @else {
+            {{ loading() ? 'Conectando con la operación' : 'Actualizá para volver a conectar' }}
+          }
+        </small>
+      </div>
+    </div>
+  </section>
+  <section class="stats" aria-label="Resumen de eventos registrados">
+    <article class="stat">
+      <div>
+        <span class="stat-label">Total de eventos</span
+        ><strong>{{ lastUpdated() ? events().length : '—' }}</strong
+        ><small>Registros en el historial</small>
+      </div>
+      <span class="stat-icon total-icon" aria-hidden="true"
+        ><svg
+          width="22"
+          height="22"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.4"
+        >
+          <rect x="4" y="3" width="16" height="18" rx="3" />
+          <path d="M8 8h8M8 12h8M8 16h5" /></svg
+      ></span>
+    </article>
+    <article class="stat">
+      <div>
+        <span class="stat-label">Producción</span
+        ><strong>{{ lastUpdated() ? productionCount() : '—' }}</strong
+        ><small>Eventos <span class="mono">PRODUCTION</span></small>
+      </div>
+      <span class="stat-icon production-icon" aria-hidden="true"
+        ><svg
+          width="23"
+          height="23"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.4"
+        >
+          <path d="M3 21V10l6 3V7l6 3V3h4v18zM7 17h1m3 0h1m3 0h1" /></svg
+      ></span>
+    </article>
+    <article class="stat">
+      <div>
+        <span class="stat-label">Calidad</span
+        ><strong>{{ lastUpdated() ? qualityCount() : '—' }}</strong
+        ><small>Eventos <span class="mono">QUALITY</span></small>
+      </div>
+      <span class="stat-icon quality-icon" aria-hidden="true"
+        ><svg
+          width="23"
+          height="23"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.4"
+        >
+          <path d="m12 3 8 3v6c0 5-8 9-8 9s-8-4-8-9V6z" />
+          <path d="m8 12 3 3 5-6" /></svg
+      ></span>
+    </article>
+  </section>
+  @if (feedback(); as message) {
+    <div
+      class="feedback"
+      [class.warning]="message.kind === 'warning'"
+      [class.error]="message.kind === 'error'"
+      [attr.role]="message.kind === 'success' ? 'status' : 'alert'"
+    >
+      <span class="feedback-icon" aria-hidden="true">{{
+        message.kind === 'success' ? '✓' : '!'
+      }}</span>
+      <div>
+        <strong>{{ message.title }}</strong>
+        <p>{{ message.detail }}</p>
+      </div>
+      <button type="button" aria-label="Cerrar mensaje" (click)="feedback.set(null)">×</button>
+    </div>
+  }
+  <div class="workspace">
+    <app-event-form
+      [busy]="submitting()"
+      [selectedEvent]="selectedEvent()"
+      (submitted)="register($event)"
+    />
+    <app-event-list
+      [events]="events()"
+      [loading]="loading()"
+      [error]="loadError()"
+      [submitting]="submitting()"
+      (refreshed)="loadEvents()"
+      (reused)="reuseEvent($event)"
+    />
+  </div>
+  <footer>
+    <div class="footer-brand">
+      <span class="footer-dot" aria-hidden="true"></span>Event Manager <span>·</span> Registro de
+      eventos de fábrica
+    </div>
+    <span>Una identidad. Un solo registro.</span>
+  </footer>
+</main>

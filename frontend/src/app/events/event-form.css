@@ -1,0 +1,135 @@
+:host {
+  display: block;
+}
+.form-panel {
+  scroll-margin-top: 24px;
+}
+.panel-heading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 24px 24px 20px;
+  border-bottom: 1px solid var(--line);
+}
+.section-number {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  background: #eef3e8;
+  color: #4a6542;
+  border-radius: 8px;
+  font:
+    12px 'Consolas',
+    monospace;
+}
+h2 {
+  font-size: 16px;
+  font-weight: 750;
+  letter-spacing: -0.3px;
+}
+.panel-heading p {
+  color: var(--muted);
+  font-size: 12px;
+  margin-top: 5px;
+}
+form {
+  padding: 23px 24px 24px;
+}
+fieldset {
+  min-width: 0;
+  border: 0;
+  padding: 0;
+  margin: 0;
+}
+.field {
+  margin-bottom: 20px;
+}
+label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 12px;
+  font-weight: 650;
+}
+label span {
+  color: #78956a;
+}
+input,
+select,
+textarea {
+  width: 100%;
+  padding: 11px 12px;
+  border: 1px solid #dce2d7;
+  background: #fff;
+  color: var(--ink);
+  font-size: 13px;
+}
+input::placeholder,
+textarea::placeholder {
+  color: #9aa296;
+}
+textarea {
+  resize: vertical;
+  min-height: 100px;
+  line-height: 1.6;
+}
+small {
+  display: block;
+  color: var(--muted);
+  font-size: 10px;
+  line-height: 1.6;
+  margin-top: 7px;
+}
+.field-error {
+  color: #a43630;
+  font-size: 11px;
+  margin-top: 6px;
+}
+[aria-invalid='true'] {
+  border-color: #bd5d52;
+}
+.character-count {
+  text-align: right;
+}
+.description-field {
+  margin-bottom: 18px;
+}
+.form-actions {
+  display: flex;
+  gap: 9px;
+}
+.button-primary {
+  flex: 1;
+}
+.plus {
+  font-size: 20px;
+  line-height: 0.8;
+  font-weight: 400;
+}
+.reset-button {
+  color: var(--muted);
+}
+.resend-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 0 24px 24px;
+  padding: 13px;
+  border: 1px solid #e5eadc;
+  border-radius: 8px;
+  background: #f7f9f2;
+}
+.resend-note > span {
+  font-size: 20px;
+  line-height: 1;
+  color: #61824c;
+}
+.resend-note p {
+  font-size: 10px;
+  line-height: 1.7;
+  color: #68765d;
+}
+.resend-note strong {
+  font-weight: 650;
+  color: #465b3e;
+}

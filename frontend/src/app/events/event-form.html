@@ -1,0 +1,99 @@
+<section class="panel form-panel" id="registro" aria-labelledby="form-title">
+  <div class="panel-heading">
+    <span class="section-number">01</span>
+    <div>
+      <h2 id="form-title">Registrar evento</h2>
+      <p>Ingresá los datos del equipo de origen.</p>
+    </div>
+  </div>
+  <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+    <fieldset [disabled]="busy()">
+      <div class="field">
+        <label for="event-id">Identificador del evento <span>*</span></label>
+        <input
+          id="event-id"
+          class="mono"
+          formControlName="eventId"
+          placeholder="Ej. EVT-1001"
+          maxlength="100"
+          autocomplete="off"
+          aria-describedby="event-id-hint event-id-error"
+          [attr.aria-invalid]="invalid('eventId')"
+        />
+        <small id="event-id-hint">Usá el identificador original para reconocer reenvíos.</small>
+        @if (invalid('eventId')) {
+          <p class="field-error" id="event-id-error">
+            Ingresá un identificador de hasta 100 caracteres.
+          </p>
+        }
+      </div>
+      <div class="field">
+        <label for="event-type">Tipo de evento <span>*</span></label>
+        <select id="event-type" formControlName="eventType" aria-describedby="type-hint">
+          <option value="PRODUCTION">PRODUCTION · Producción</option>
+          <option value="QUALITY">QUALITY · Calidad</option>
+        </select>
+        <small id="type-hint">{{
+          form.controls.eventType.value === 'QUALITY'
+            ? 'Se registrará el evento y se generará una auditoría.'
+            : 'Se registrará el evento de producción.'
+        }}</small>
+      </div>
+      <div class="field">
+        <label for="event-timestamp">Fecha y hora del evento <span>*</span></label>
+        <input
+          id="event-timestamp"
+          type="datetime-local"
+          step="1"
+          formControlName="timestamp"
+          aria-describedby="timestamp-hint timestamp-error"
+          [attr.aria-invalid]="invalid('timestamp')"
+        />
+        <small id="timestamp-hint">Hora local · {{ timeZone }}</small>
+        @if (invalid('timestamp')) {
+          <p class="field-error" id="timestamp-error">Ingresá una fecha y hora válidas.</p>
+        }
+      </div>
+      <div class="field description-field">
+        <label for="event-description">Descripción <span>*</span></label>
+        <textarea
+          id="event-description"
+          formControlName="description"
+          rows="4"
+          maxlength="2000"
+          placeholder="¿Qué ocurrió en la operación?"
+          aria-describedby="description-error description-count"
+          [attr.aria-invalid]="invalid('description')"
+        ></textarea>
+        <small class="character-count" id="description-count"
+          >{{ form.controls.description.value.length }} / 2000</small
+        >
+        @if (invalid('description')) {
+          <p class="field-error" id="description-error">
+            Ingresá una descripción de hasta 2000 caracteres.
+          </p>
+        }
+      </div>
+      <div class="form-actions">
+        <button class="button button-primary" type="submit" [disabled]="busy()">
+          @if (busy()) {
+            <span class="spinner" aria-hidden="true"></span>
+          } @else {
+            <span class="plus" aria-hidden="true">+</span>
+          }
+          {{ busy() ? 'Registrando…' : 'Registrar evento' }}
+        </button>
+        <button class="button reset-button" type="button" (click)="reset()" [disabled]="busy()">
+          Limpiar
+        </button>
+      </div>
+    </fieldset>
+  </form>
+  <div class="resend-note">
+    <span aria-hidden="true">↻</span>
+    <p>
+      <strong>¿Querés probar un reenvío?</strong> Los datos se conservan al registrar. Volvé a
+      enviar el mismo identificador para verificar el control de duplicados.
+    </p>
+  </div>
+</section>

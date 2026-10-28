@@ -1,0 +1,162 @@
+<section
+  class="panel list-panel"
+  id="eventos"
+  aria-labelledby="list-title"
+  [attr.aria-busy]="loading()"
+>
+  <div class="panel-heading">
+    <div class="heading-copy">
+      <span class="section-number">02</span>
+      <div>
+        <h2 id="list-title">
+          Eventos registrados <span class="count">{{ events().length }}</span>
+        </h2>
+        <p>El historial de tu operación, en un solo lugar.</p>
+      </div>
+    </div>
+    <button
+      type="button"
+      class="refresh-button"
+      (click)="refreshed.emit()"
+      [disabled]="loading()"
+      aria-label="Actualizar eventos"
+    >
+      @if (loading()) {
+        <span class="spinner" aria-hidden="true"></span>
+      } @else {
+        <span aria-hidden="true">↻</span>
+      }
+      <span>Actualizar</span>
+    </button>
+  </div>
+  <div class="toolbar">
+    <div class="search-field">
+      <svg
+        width="16"
+        height="16"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.7"
+        aria-hidden="true"
+      >
+        <circle cx="10.5" cy="10.5" r="6.5" />
+        <path d="m16 16 4 4" /></svg
+      ><input
+        type="search"
+        placeholder="Buscar por ID o descripción"
+        aria-label="Buscar por identificador o descripción"
+        [value]="query()"
+        (input)="query.set($any($event.target).value)"
+      />
+    </div>
+    <select
+      aria-label="Filtrar por tipo de evento"
+      [value]="type()"
+      (change)="type.set($any($event.target).value)"
+    >
+      <option value="ALL">Todos los tipos</option>
+      <option value="PRODUCTION">Producción</option>
+      <option value="QUALITY">Calidad</option>
+    </select>
+  </div>
+  @if (error()) {
+    <div class="load-error" role="alert">
+      <strong>No pudimos actualizar el historial.</strong>
+      <p>{{ error() }}</p>
+      <button type="button" (click)="refreshed.emit()" [disabled]="loading()">
+        Volver a intentar →
+      </button>
+    </div>
+  }
+  @if (loading() && !events().length) {
+    <div class="empty-state" role="status">
+      <span class="spinner" aria-hidden="true"></span>
+      <h3>Consultando eventos…</h3>
+      <p>Estamos recuperando los registros.</p>
+    </div>
+  } @else if (!events().length && !error()) {
+    <div class="empty-state">
+      <span class="empty-icon" aria-hidden="true"
+        ><svg
+          width="27"
+          height="27"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.3"
+        >
+          <rect x="4" y="3" width="16" height="18" rx="3" />
+          <path d="M8 8h8M8 12h8M8 16h4" /></svg
+      ></span>
+      <h3>Todo empieza con un evento</h3>
+      <p>
+        Registrá el primero desde el formulario.<br />Vas a encontrarlo acá, junto al resto de tu
+        historial.
+      </p>
+    </div>
+  } @else if (events().length && !filteredEvents().length) {
+    <div class="empty-state">
+      <h3>No encontramos coincidencias</h3>
+      <p>Probá con otro identificador o cambiá el filtro.</p>
+      <button class="button" type="button" (click)="query.set(''); type.set('ALL')">
+        Limpiar filtros
+      </button>
+    </div>
+  } @else if (filteredEvents().length) {
+    <div
+      class="table-scroll"
+      tabindex="0"
+      role="region"
+      aria-label="Tabla de eventos, desplazable horizontalmente"
+    >
+      <table>
+        <caption class="sr-only">
+          Eventos recibidos desde los equipos de fábrica
+        </caption>
+        <thead>
+          <tr>
+            <th scope="col">Identificador</th>
+            <th scope="col">Tipo</th>
+            <th scope="col">Fecha y hora</th>
+            <th scope="col">Descripción</th>
+            <th scope="col"><span class="sr-only">Acciones</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (event of filteredEvents(); track event.id) {
+            <tr>
+              <td class="event-id mono">{{ event.eventId }}</td>
+              <td>
+                <span class="type-badge" [class.quality]="event.eventType === 'QUALITY'"
+                  ><span aria-hidden="true"></span>{{ typeLabels[event.eventType] }}</span
+                >
+              </td>
+              <td class="event-date">
+                {{ event.timestamp | date: 'dd/MM/yyyy'
+                }}<small>{{ event.timestamp | date: 'HH:mm:ss' }}</small>
+              </td>
+              <td class="description">{{ event.description }}</td>
+              <td>
+                <button
+                  type="button"
+                  class="reuse-button"
+                  (click)="reused.emit(event)"
+                  [disabled]="submitting()"
+                  [attr.aria-label]="'Reutilizar evento ' + event.eventId"
+                  title="Cargar los mismos datos en el formulario"
+                >
+                  ↗
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+  <div class="table-footer">
+    <span>{{ filteredEvents().length }} de {{ events().length }} eventos</span
+    ><span>Fecha y hora local del navegador</span>
+  </div>
+</section>
