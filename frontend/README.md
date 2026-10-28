@@ -2,6 +2,8 @@
 
 Aplicación Angular 21 standalone para registrar y consultar eventos de fábrica.
 
+La [documentación principal del proyecto](../README.md) incluye el contrato de la API, las decisiones del backend y el recorrido completo de evaluación.
+
 ## Ejecución local
 
 Requisitos: Node.js 20.19 o superior dentro de la rama 20 (también se admiten versiones compatibles de Node 22 y 24), npm y el backend ejecutándose en el puerto 8080.
@@ -19,7 +21,7 @@ Si npm 10 falla al instalar con `Cannot read properties of null (reading 'edgesO
 npm exec --yes --package=npm@11.6.2 -- npm ci
 ```
 
-Abrir http://127.0.0.1:4200. Desde la carpeta del backend se puede iniciar Spring Boot con `./mvnw spring-boot:run` o `.\mvnw.cmd spring-boot:run` en Windows.
+Abrir http://127.0.0.1:4200. Desde la carpeta del backend se puede iniciar Spring Boot con `sh ./mvnw spring-boot:run` o `.\mvnw.cmd spring-boot:run` en Windows.
 
 ## API y proxy
 

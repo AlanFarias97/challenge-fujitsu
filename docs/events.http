@@ -1,0 +1,76 @@
+# Ejecutar con el backend iniciado en el puerto 8080.
+# Los IDs deben ser nuevos para las solicitudes de creación.
+# Para repetir la demo, cambiar estos valores y los filtros de verification.sql.
+@baseUrl = http://localhost:8080
+@productionEventId = DEMO-PRODUCTION-001
+@qualityEventId = DEMO-QUALITY-001
+
+### 1. Crear PRODUCTION: espera 201, un evento y cero auditorías
+POST {{baseUrl}}/events
+Content-Type: application/json
+
+{
+  "eventId": "{{productionEventId}}",
+  "timestamp": "2026-10-28T13:00:00Z",
+  "eventType": "PRODUCTION",
+  "description": "Inicio de la línea de producción"
+}
+
+### 2. Crear QUALITY: espera 201, un evento y una auditoría
+POST {{baseUrl}}/events
+Content-Type: application/json
+
+{
+  "eventId": "{{qualityEventId}}",
+  "timestamp": "2026-10-28T13:05:00Z",
+  "eventType": "QUALITY",
+  "description": "Control de calidad aprobado"
+}
+
+### 3. Reenviar QUALITY: espera 409, sin otro evento ni auditoría
+POST {{baseUrl}}/events
+Content-Type: application/json
+
+{
+  "eventId": "{{qualityEventId}}",
+  "timestamp": "2026-10-28T13:05:00Z",
+  "eventType": "QUALITY",
+  "description": "Control de calidad aprobado"
+}
+
+### 4. Mismo eventId con otros datos: espera 409 y conserva el original
+POST {{baseUrl}}/events
+Content-Type: application/json
+
+{
+  "eventId": "{{qualityEventId}}",
+  "timestamp": "2026-10-28T14:00:00Z",
+  "eventType": "PRODUCTION",
+  "description": "Este reenvío no debe modificar el evento registrado"
+}
+
+### 5. Descripción vacía: espera 400 y ningún registro para este ID
+POST {{baseUrl}}/events
+Content-Type: application/json
+
+{
+  "eventId": "DEMO-INVALID-001",
+  "timestamp": "2026-10-28T13:10:00Z",
+  "eventType": "QUALITY",
+  "description": ""
+}
+
+### 6. Tipo desconocido: espera 400
+POST {{baseUrl}}/events
+Content-Type: application/json
+
+{
+  "eventId": "DEMO-INVALID-002",
+  "timestamp": "2026-10-28T13:10:00Z",
+  "eventType": "UNKNOWN",
+  "description": "Este tipo no está admitido"
+}
+
+### 7. Consultar: espera 200, con los eventos válidos una sola vez
+GET {{baseUrl}}/events
+Accept: application/json
